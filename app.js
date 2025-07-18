@@ -67,7 +67,6 @@ io.on("connection", function(socket){
 
     try {
         await newMessage.save();
-        console.log('Message saved to MongoDB');
     } catch (err) {
         console.error('Error saving message:', err);
     }
