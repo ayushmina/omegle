@@ -217,24 +217,37 @@ function showTypingIndicator() {
         let inCall = false;
 
         const rtcSettings = {
-            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-        };
+    iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        {
+            urls: "turn:relay.example.com:3478",
+            username: "user",
+            credential: "pass"
+        }
+    ]
+};
 
-        const initialize = async () => {
-            if (!localStream) {
-                try {
-                    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-                    document.querySelector("#localVideo").srcObject = localStream;
-                    document.querySelector("#localVideo").style.display = "block";
-                } catch (err) {
-                    console.log("Rejected by browser: " + err);
-                    return;
-                }
-            }
-            createPeerConnection();
-            initiateOffer();
-            inCall = true;
-        };
+        const initialize = async (isCaller = false) => {
+    if (!localStream) {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+            document.querySelector("#localVideo").srcObject = localStream;
+            document.querySelector("#localVideo").style.display = "block";
+        } catch (err) {
+            console.log("Rejected by browser: " + err);
+            return;
+        }
+    }
+
+    createPeerConnection();
+
+    if (isCaller) {
+        initiateOffer();
+    }
+
+    inCall = true;
+};
+
 
         const initiateOffer = async () => {
             try {
@@ -247,78 +260,106 @@ function showTypingIndicator() {
         };
 
         const createPeerConnection = () => {
-            peerConnection = new RTCPeerConnection(rtcSettings);
-            document.querySelector("#localVideo").classList.add("smallFrame");
-            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-            peerConnection.ontrack = (event) => {
-                const remoteVideo = document.querySelector("#remoteVideo");
-                remoteVideo.srcObject = event.streams[0];
-                remoteVideo.style.display = "block";
-            };
-            peerConnection.onicecandidate = (event) => {
-                if (event.candidate) {
-                    socket.emit("signalingMessage", { room, message: JSON.stringify({ type: "candidate", candidate: event.candidate }) });
-                }
-            };
-            peerConnection.onconnectionstatechange = () => {
-                console.log("Connection state changed to:", peerConnection.connectionState);
-            };
-        };
+    if (peerConnection) return;  // prevent duplicate connections
 
-        const handleSignalingMessage = async (message) => {
-            const { type, offer, answer, candidate } = JSON.parse(message);
-            switch (type) {
-                case "offer":
-                    await handleOffer(offer);
-                    break;
-                case "answer":
-                    await handleAnswer(answer);
-                    break;
-                case "candidate":
-                    if (peerConnection && candidate) {
-                        try {
-                            await peerConnection.addIceCandidate(candidate);
-                        } catch (err) {
-                            console.log("Failed to add ICE candidate", err);
-                        }
-                    }
-                    break;
-                case "hangup":
-                    hangup();
-                    break;
-            }
-        };
+    peerConnection = new RTCPeerConnection(rtcSettings);
+    document.querySelector("#localVideo").classList.add("smallFrame");
 
-        const handleOffer = async (offer) => {
-            if (!peerConnection) createPeerConnection();
-            if (!localStream) {
+    localStream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, localStream);
+    });
+
+    remoteStream = new MediaStream();
+    const remoteVideo = document.querySelector("#remoteVideo");
+    remoteVideo.srcObject = remoteStream;
+    remoteVideo.style.display = "block";
+    remoteVideo.muted = false;
+
+    peerConnection.ontrack = (event) => {
+        console.log("Remote track received", event.streams);
+        event.streams[0].getTracks().forEach(track => {
+            remoteStream.addTrack(track);
+        });
+    };
+
+    peerConnection.onicecandidate = (event) => {
+        if (event.candidate) {
+            console.log("Sending ICE candidate", event.candidate);
+            socket.emit("signalingMessage", { 
+                room, 
+                message: JSON.stringify({ type: "candidate", candidate: event.candidate }) 
+            });
+        }
+    };
+
+    peerConnection.onconnectionstatechange = () => {
+        console.log("Connection state changed to:", peerConnection.connectionState);
+    };
+};
+
+const handleOffer = async (offer) => {
+    console.log("Handling offer", offer);
+    if (!peerConnection) createPeerConnection();
+    if (!localStream) {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+            document.querySelector("#localVideo").srcObject = localStream;
+            document.querySelector("#localVideo").style.display = "block";
+        } catch (err) {
+            console.error("Rejected by browser: ", err);
+            return;
+        }
+    }
+    try {
+        await peerConnection.setRemoteDescription(offer);
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        socket.emit("signalingMessage", { room, message: JSON.stringify({ type: "answer", answer }) });
+        inCall = true;
+    } catch (err) {
+        console.error("Failed to handle offer:", err);
+    }
+};
+
+const handleAnswer = async (answer) => {
+    console.log("Handling answer", answer);
+    if (!peerConnection) {
+        console.error("peerConnection is null on handleAnswer");
+        return;
+    }
+    try {
+        await peerConnection.setRemoteDescription(answer);
+    } catch (err) {
+        console.error("Failed to handle answer:", err);
+    }
+};
+
+const handleSignalingMessage = async (message) => {
+    console.log("Signaling message received:", message);
+    const { type, offer, answer, candidate } = JSON.parse(message);
+    switch (type) {
+        case "offer":
+            await handleOffer(offer);
+            break;
+        case "answer":
+            await handleAnswer(answer);
+            break;
+        case "candidate":
+            if (peerConnection && candidate) {
                 try {
-                    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-                    document.querySelector("#localVideo").srcObject = localStream;
-                    document.querySelector("#localVideo").style.display = "block";
+                    console.log("Adding ICE candidate", candidate);
+                    await peerConnection.addIceCandidate(candidate);
                 } catch (err) {
-                    console.error("Rejected by browser: ", err);
-                    return;
+                    console.error("Failed to add ICE candidate", err);
                 }
             }
-            try {
-                await peerConnection.setRemoteDescription(offer);
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-                socket.emit("signalingMessage", { room, message: JSON.stringify({ type: "answer", answer }) });
-                inCall = true;
-            } catch (err) {
-                console.log("Failed to handle offer:", err);
-            }
-        };
+            break;
+        case "hangup":
+            hangup();
+            break;
+    }
+};
 
-        const handleAnswer = async (answer) => {
-            try {
-                await peerConnection.setRemoteDescription(answer);
-            } catch (err) {
-                console.log("Failed to handle answer:", err);
-            }
-        };
 
         document.querySelector("#video-call-btn").addEventListener("click", () => {
             socket.emit("startVideoCall", { room });
@@ -329,16 +370,17 @@ function showTypingIndicator() {
         });
 
         socket.on("callAccepted", () => {
-            initialize();
-            document.querySelector(".videoblock").classList.remove("hidden");
-        });
+    initialize(true);  // initiator makes offer
+    document.querySelector(".videoblock").classList.remove("hidden");
+});
 
-        document.querySelector("#accept-call").addEventListener("click", () => {
-            document.querySelector("#incoming-call").classList.add("hidden");
-            initialize();
-            document.querySelector(".videoblock").classList.remove("hidden");
-            socket.emit("acceptCall", { room });
-        });
+document.querySelector("#accept-call").addEventListener("click", () => {
+    document.querySelector("#incoming-call").classList.add("hidden");
+    initialize(false);  // receiver just waits for offer
+    document.querySelector(".videoblock").classList.remove("hidden");
+    socket.emit("acceptCall", { room });
+});
+
 
         document.querySelector("#reject-call").addEventListener("click", () => {
             document.querySelector("#incoming-call").classList.add("hidden");
