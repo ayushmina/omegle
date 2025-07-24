@@ -16,106 +16,136 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            overflow: hidden;
         }
 
-        /* Video Controls */
-        #videos {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+        /* Video and Chat Combined Layout */
+        .main-container {
+            display: flex;
             height: 100vh;
-            background: #000;
-            z-index: 1000;
+            max-width: 100%;
+            background: white;
         }
 
-        .video-player {
+        /* Video Section */
+        .video-section {
+            flex: 1;
+            position: relative;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             background: #000;
         }
 
-        .smallFrame {
-            position: fixed;
-            bottom: 120px;
+        .local-video {
+            position: absolute;
+            bottom: 20px;
             right: 20px;
-            height: 180px;
-            width: 320px;
+            width: 200px;
+            height: 150px;
             border-radius: 12px;
             border: 3px solid white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            z-index: 1001;
+            object-fit: cover;
+            z-index: 10;
         }
 
-        #video-controls {
-            position: fixed;
-            bottom: 30px;
+        .video-controls {
+            position: absolute;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 15px;
-            z-index: 1002;
+            z-index: 20;
         }
 
         .video-control-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+            padding: 12px 24px;
+            border-radius: 25px;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-        }
-
-        .video-control-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .video-control-btn.camera { background: #4CAF50; }
-        .video-control-btn.mic { background: #2196F3; }
-        .video-control-btn.hangup { background: #f44336; }
-
-        /* Chat Layout */
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 0 30px rgba(0,0,0,0.1);
-        }
-
-        /* Main Chat Area */
-        .chat-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            background: #f8fafc;
-        }
-
-        /* Status Area */
-        .status-area {
-            padding: 20px;
-            text-align: center;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
         }
 
-        .status-message {
+        .video-control-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .video-control-btn.start-chat {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+
+        /* Chat Section */
+        .chat-section {
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-left: 1px solid #e5e7eb;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .chat-header h3 {
+            margin: 0;
             font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chat-header .status {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* Status Area */
+        .status-area {
+            padding: 16px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .status-message {
+            font-size: 14px;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .status-subtitle {
-            font-size: 14px;
+            font-size: 12px;
             opacity: 0.9;
         }
 
@@ -123,12 +153,13 @@
         .messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 16px;
             background: #f8fafc;
+            max-height: calc(100vh - 200px);
         }
 
         .message-item {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             animation: slideIn 0.3s ease-out;
         }
 
@@ -148,11 +179,12 @@
         }
 
         .message-content {
-            max-width: 70%;
-            padding: 12px 16px;
-            border-radius: 18px;
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 16px;
             word-wrap: break-word;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 14px;
         }
 
         .message-sent .message-content {
@@ -171,24 +203,25 @@
         .system-message {
             display: flex;
             justify-content: center;
-            margin: 16px 0;
+            margin: 12px 0;
         }
 
         .system-message .message-content {
             background: #fef3c7;
             color: #92400e;
             border: 1px solid #fbbf24;
-            font-size: 14px;
-            max-width: 80%;
+            font-size: 12px;
+            max-width: 90%;
         }
 
         /* Typing Indicator */
         .typing-indicator {
             display: none;
-            padding: 8px 20px;
+            padding: 8px 16px;
             font-style: italic;
             color: #6b7280;
-            font-size: 14px;
+            font-size: 12px;
+            background: #f8fafc;
         }
 
         .typing-indicator.show {
@@ -205,21 +238,21 @@
         .input-area {
             background: white;
             border-top: 1px solid #e5e7eb;
-            padding: 20px;
+            padding: 16px;
         }
 
         .input-form {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .message-input {
             flex: 1;
-            padding: 12px 16px;
+            padding: 8px 12px;
             border: 2px solid #e5e7eb;
-            border-radius: 25px;
-            font-size: 16px;
+            border-radius: 20px;
+            font-size: 14px;
             outline: none;
             transition: all 0.3s ease;
         }
@@ -236,16 +269,16 @@
 
         /* Buttons */
         .btn {
-            padding: 12px 24px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 25px;
+            border-radius: 20px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
         }
 
         .btn:disabled {
@@ -256,149 +289,97 @@
         .btn-primary {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
 
         .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-video {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-video:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         .btn-next {
             background: linear-gradient(135deg, #f59e0b, #d97706);
             color: white;
-            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
         }
 
         .btn-next:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
         }
 
         .btn-end {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
-            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
         }
 
         .btn-end:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
         }
 
         /* Controls Row */
         .controls-row {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             justify-content: space-between;
-        }
-
-        .controls-left {
-            display: flex;
-            gap: 12px;
         }
 
         .controls-right {
             display: flex;
-            gap: 12px;
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-        }
-
-        .modal.hidden {
-            display: none;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 32px;
-            border-radius: 16px;
-            text-align: center;
-            max-width: 400px;
-            margin: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #1f2937;
-        }
-
-        .modal-text {
-            font-size: 16px;
-            color: #6b7280;
-            margin-bottom: 24px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        /* Hidden Elements */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Video Hidden */
-        #local-video, #remote-video {
-            display: none;
+            gap: 8px;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .chat-container {
-                height: 100vh;
-            }
-
-            .controls-row {
+            .main-container {
                 flex-direction: column;
-                gap: 8px;
             }
 
-            .controls-left,
-            .controls-right {
+            .video-section {
+                height: 50vh;
+            }
+
+            .chat-section {
                 width: 100%;
-                justify-content: center;
+                height: 50vh;
             }
 
-            .btn {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .smallFrame {
-                height: 120px;
-                width: 200px;
-                bottom: 140px;
+            .local-video {
+                width: 120px;
+                height: 90px;
+                bottom: 10px;
                 right: 10px;
             }
+
+            .video-controls {
+                bottom: 10px;
+            }
+
+            .video-control-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+
+        /* Loading Placeholder */
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .video-placeholder .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
         }
     </style>
     <link href="/css/style.css" rel="stylesheet">
@@ -407,84 +388,82 @@
 <body>
     <%- include('partials/header') %>
 
-    <!-- Video Call Interface -->
-    <div class="modal hidden" id="video-modal">
-        <div id="videos">
-            <video class="video-player" id="localVideo" autoplay muted playsinline></video>
-            <video class="video-player" id="remoteVideo" autoplay playsinline></video>
-        </div>
+    <!-- Main Combined Interface -->
+    <div class="main-container">
+        <!-- Video Section -->
+        <div class="video-section">
+            <div class="video-container">
+                <!-- Video Placeholder when no call -->
+                <div class="video-placeholder" id="video-placeholder">
+                    <div>
+                        <div class="icon">📹</div>
+                        <div>Connecting to video chat...</div>
+                        <div style="font-size: 14px; opacity: 0.8; margin-top: 8px;">Camera will start automatically</div>
+                    </div>
+                </div>
+                
+                <!-- Main video (remote) -->
+                <video class="main-video" id="remoteVideo" autoplay playsinline style="display: none;"></video>
+                
+                <!-- Local video (small) -->
+                <video class="local-video" id="localVideo" autoplay muted playsinline style="display: none;"></video>
+            </div>
 
-        <div id="video-controls">
-            <button class="video-control-btn camera" id="cameraButton" title="Toggle Camera">📷</button>
-            <button class="video-control-btn mic" id="micButton" title="Toggle Microphone">🎤</button>
-            <button class="video-control-btn hangup" id="hangup" title="End Call">📞</button>
-        </div>
-    </div>
-
-    <!-- Incoming Call Modal -->
-    <div class="modal hidden" id="incoming-call">
-        <div class="modal-content">
-            <div class="modal-title">📞 Incoming Video Call</div>
-            <div class="modal-text">Stranger wants to start a video call with you</div>
-            <div class="modal-buttons">
-                <button class="btn btn-video" id="accept-call">
-                    <span>📹</span> Accept
-                </button>
-                <button class="btn btn-end" id="reject-call">
-                    <span>❌</span> Decline
+            <!-- Video Controls -->
+            <div class="video-controls">
+                <button class="video-control-btn start-chat" id="startChatBtn" title="Start Video Chat">
+                    🚀 Start Video Chat
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- Main Chat Interface -->
-    <div class="chat-container">
-        <!-- Status Area -->
-        <div class="status-area" id="status-area">
-            <div class="status-message" id="status-message">Looking for someone to chat with...</div>
-            <div class="status-subtitle">Please wait while we connect you with a stranger</div>
-        </div>
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <h3>💬 Chat</h3>
+                <div class="status" id="chat-status">Connecting...</div>
+            </div>
 
-        <!-- Messages Container -->
-        <div class="messages-container" id="message-container">
-            <!-- Messages will be added here dynamically -->
-        </div>
+            <!-- Status Area (when not connected) -->
+            <div class="status-area" id="status-area">
+                <div class="status-message" id="status-message">Looking for someone to chat with...</div>
+                <div class="status-subtitle">Please wait while we connect you with a stranger</div>
+            </div>
 
-        <!-- Typing Indicator -->
-        <div class="typing-indicator" id="typing-indicator">
-            Stranger is typing...
-        </div>
+            <!-- Messages Container -->
+            <div class="messages-container" id="message-container">
+                <!-- Messages will be added here dynamically -->
+            </div>
 
-        <!-- Input Area -->
-        <div class="input-area">
-            <form class="input-form" id="chatform">
-                <input type="text" class="message-input" id="messagebox" 
-                       placeholder="Type a message..." disabled>
-                <button type="submit" class="btn btn-primary" id="send-btn" disabled>
-                    <span>📤</span> Send
-                </button>
-            </form>
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typing-indicator">
+                Stranger is typing...
+            </div>
 
-            <div class="controls-row">
-                <div class="controls-left">
-                    <button type="button" class="btn btn-video" id="video-call-btn" disabled>
-                        <span>📹</span> Video Call
+            <!-- Input Area -->
+            <div class="input-area">
+                <form class="input-form" id="chatform">
+                    <input type="text" class="message-input" id="messagebox" 
+                           placeholder="Type a message..." disabled>
+                    <button type="submit" class="btn btn-primary" id="send-btn" disabled>
+                        <span>📤</span> Send
                     </button>
-                </div>
-                <div class="controls-right">
-                    <button type="button" class="btn btn-next" id="next-btn">
-                        <span>⏭️</span> Next
-                    </button>
-                    <button type="button" class="btn btn-end" id="end-btn">
-                        <span>❌</span> End Chat
-                    </button>
+                </form>
+
+                <div class="controls-row">
+                    <div class="controls-right">
+                        <button type="button" class="btn btn-next" id="next-btn">
+                            <span>⏭️</span> Next
+                        </button>
+                        <button type="button" class="btn btn-end" id="end-btn">
+                            <span>❌</span> End Chat
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <video id="local-video" class="hidden" autoplay></video>
-    <video id="remote-video" class="hidden" autoplay></video>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
@@ -494,11 +473,12 @@
         const sendBtn = document.querySelector("#send-btn");
         const nextBtn = document.querySelector("#next-btn");
         const endBtn = document.querySelector("#end-btn");
-        const videoCallBtn = document.querySelector("#video-call-btn");
         const statusMessage = document.querySelector("#status-message");
         const statusArea = document.querySelector("#status-area");
+        const chatStatus = document.querySelector("#chat-status");
         const messageContainer = document.querySelector("#message-container");
         const typingIndicator = document.querySelector("#typing-indicator");
+        const videoPlaceholder = document.querySelector("#video-placeholder");
         
         let room;
         let isConnected = false;
@@ -518,9 +498,14 @@
             const subtitleEl = statusArea.querySelector('.status-subtitle');
             subtitleEl.textContent = subtitle;
             
+            // Update chat header status
+            chatStatus.textContent = isConnected ? "Connected" : "Waiting...";
+            
             const statusEl = document.getElementById("connection-status");
-            statusEl.textContent = status;
-            statusEl.className = isConnected ? "text-green-600 text-sm font-medium" : "text-orange-500 text-sm font-medium";
+            if (statusEl) {
+                statusEl.textContent = status;
+                statusEl.className = isConnected ? "text-green-600 text-sm font-medium" : "text-orange-500 text-sm font-medium";
+            }
             
             // Update status area colors
             if (isConnected) {
@@ -538,12 +523,22 @@
             // Enable chat controls
             messagebox.disabled = false;
             sendBtn.disabled = false;
-            videoCallBtn.disabled = false;
             messagebox.placeholder = "Type a message and press Enter...";
             messagebox.focus();
             
             updateConnectionStatus("Connected to stranger", "You can now start chatting!");
-            addSystemMessage("🎉 Connected! Say hello to start the conversation.");
+            addSystemMessage("🎉 Connected! Starting video chat automatically...");
+            
+            // Auto-start video call - determine who should be caller based on socket ID order
+            const roomUsers = data.room.split('-');
+            const isCaller = socket.id === roomUsers[0]; // First user in room name is caller
+            
+            setTimeout(() => {
+                initializeVideo(isCaller);
+                // Hide the start button since video is auto-starting
+                const startBtn = document.querySelector("#startChatBtn");
+                if (startBtn) startBtn.style.display = "none";
+            }, 1000);
         });
 
         socket.on("waiting", function(data) {
@@ -554,8 +549,10 @@
             // Disable chat controls
             messagebox.disabled = true;
             sendBtn.disabled = true;
-            videoCallBtn.disabled = true;
             messagebox.placeholder = "Waiting for connection...";
+            
+            // Show video placeholder
+            showVideoPlaceholder();
             
             clearChat();
         });
@@ -568,14 +565,13 @@
             // Disable chat controls
             messagebox.disabled = true;
             sendBtn.disabled = true;
-            videoCallBtn.disabled = true;
             messagebox.placeholder = "Stranger left the chat...";
             
             addSystemMessage("👋 " + data.message);
             
-            // If in video call, hang up
+            // End video call
             if (inCall) {
-                hangup();
+                endVideoCall();
             }
         });
 
@@ -593,12 +589,11 @@
             // Disable chat controls
             messagebox.disabled = true;
             sendBtn.disabled = true;
-            videoCallBtn.disabled = true;
             messagebox.placeholder = "Searching for new connection...";
             
-            // If in video call, hang up first
+            // If in video call, end video first
             if (inCall) {
-                hangup();
+                endVideoCall();
             }
         });
 
@@ -709,69 +704,18 @@
             ]
         };
 
-        // Video call button
-        videoCallBtn.addEventListener("click", () => {
-            if (!isConnected) return;
-            socket.emit("startVideoCall", { room });
-            addSystemMessage("📞 Calling stranger...");
-        });
-
-        // Video call events
-        socket.on("incomingCall", () => {
-            document.querySelector("#incoming-call").classList.remove("hidden");
-        });
-
-        socket.on("callAccepted", () => {
-            initializeVideo(true);
-            showVideoModal();
-        });
-
-        socket.on("callRejected", () => {
-            addSystemMessage("📞 Call was declined by stranger");
-        });
-
-        // Call controls
-        document.querySelector("#accept-call").addEventListener("click", () => {
-            document.querySelector("#incoming-call").classList.add("hidden");
-            initializeVideo(false);
-            showVideoModal();
-            socket.emit("acceptCall", { room });
-        });
-
-        document.querySelector("#reject-call").addEventListener("click", () => {
-            document.querySelector("#incoming-call").classList.add("hidden");
-            socket.emit("rejectCall", { room });
-        });
-
-        document.querySelector("#hangup").addEventListener("click", () => {
-            hangup();
-        });
-
         // Video controls
-        const cameraButton = document.querySelector("#cameraButton");
-        const micButton = document.querySelector("#micButton");
-        let videoEnabled = true;
-        let micEnabled = true;
-
-        cameraButton.addEventListener("click", () => {
-            if (!localStream) return;
-            const videoTrack = localStream.getVideoTracks()[0];
-            if (videoTrack) {
-                videoEnabled = !videoEnabled;
-                videoTrack.enabled = videoEnabled;
-                cameraButton.innerHTML = videoEnabled ? "📷" : "❌";
-                cameraButton.style.opacity = videoEnabled ? "1" : "0.5";
+        const startChatBtn = document.querySelector("#startChatBtn");
+        
+        // Auto-start video when button is clicked (manual trigger)
+        startChatBtn.addEventListener("click", () => {
+            if (!isConnected) {
+                addSystemMessage("❌ Please wait for connection before starting video");
+                return;
             }
-        });
-
-        micButton.addEventListener("click", () => {
-            if (!localStream) return;
-            const audioTrack = localStream.getAudioTracks()[0];
-            if (audioTrack) {
-                micEnabled = !micEnabled;
-                audioTrack.enabled = micEnabled;
-                micButton.innerHTML = micEnabled ? "🎤" : "🔇";
-                micButton.style.opacity = micEnabled ? "1" : "0.5";
+            if (!inCall) {
+                initializeVideo(true);
+                startChatBtn.style.display = "none"; // Hide button after starting
             }
         });
 
@@ -783,19 +727,62 @@
             document.querySelector("#video-modal").classList.add("hidden");
         }
 
+        function showVideoPlaceholder() {
+            const localVideo = document.querySelector("#localVideo");
+            const remoteVideo = document.querySelector("#remoteVideo");
+            const placeholder = document.querySelector("#video-placeholder");
+            const startBtn = document.querySelector("#startChatBtn");
+            
+            if (localVideo) {
+                localVideo.srcObject = null;
+                localVideo.style.display = "none";
+            }
+            if (remoteVideo) {
+                remoteVideo.srcObject = null;
+                remoteVideo.style.display = "none";
+            }
+            if (placeholder) {
+                placeholder.style.display = "flex";
+            }
+            if (startBtn) {
+                startBtn.style.display = "flex";
+            }
+        }
+
+        function hideVideoPlaceholder() {
+            const placeholder = document.querySelector("#video-placeholder");
+            const startBtn = document.querySelector("#startChatBtn");
+            
+            if (placeholder) {
+                placeholder.style.display = "none";
+            }
+            if (startBtn) {
+                startBtn.style.display = "none";
+            }
+        }
+
         const initializeVideo = async (isCaller = false) => {
             try {
+                console.log("Initializing video...", { isCaller });
+                
                 localStream = await navigator.mediaDevices.getUserMedia({ 
                     audio: true, 
                     video: { width: 1280, height: 720 }
                 });
                 
-                document.querySelector("#localVideo").srcObject = localStream;
+                console.log("Got local stream:", localStream);
+                const localVideo = document.querySelector("#localVideo");
+                localVideo.srcObject = localStream;
+                localVideo.style.display = "block"; // Make video visible
+                
+                // Hide the placeholder and connecting message
+                hideVideoPlaceholder();
                 
                 createPeerConnection();
                 
                 if (isCaller) {
-                    initiateOffer();
+                    console.log("Initiating offer as caller");
+                    setTimeout(() => initiateOffer(), 1000); // Small delay to ensure connection is ready
                 }
                 
                 inCall = true;
@@ -803,7 +790,7 @@
                 
             } catch (err) {
                 console.error("Error accessing media devices:", err);
-                addSystemMessage("❌ Camera/microphone access denied");
+                addSystemMessage("❌ Camera/microphone access denied. Please allow camera and microphone access and refresh the page.");
             }
         };
 
@@ -811,15 +798,18 @@
             if (peerConnection) return;
 
             peerConnection = new RTCPeerConnection(rtcSettings);
-            document.querySelector("#localVideo").classList.add("smallFrame");
 
-            localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, localStream);
-            });
+            // Only add tracks if localStream exists
+            if (localStream) {
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+            }
 
             remoteStream = new MediaStream();
             const remoteVideo = document.querySelector("#remoteVideo");
             remoteVideo.srcObject = remoteStream;
+            remoteVideo.style.display = "block"; // Make video visible
 
             peerConnection.ontrack = (event) => {
                 event.streams[0].getTracks().forEach(track => {
@@ -839,7 +829,7 @@
             peerConnection.onconnectionstatechange = () => {
                 console.log("Connection state:", peerConnection.connectionState);
                 if (peerConnection.connectionState === 'disconnected') {
-                    hangup();
+                    endVideoCall();
                 }
             };
         };
@@ -895,12 +885,16 @@
                         await handleAnswer(answer);
                         break;
                     case "candidate":
-                        if (peerConnection && candidate) {
-                            await peerConnection.addIceCandidate(candidate);
+                        if (peerConnection && candidate && peerConnection.remoteDescription) {
+                            try {
+                                await peerConnection.addIceCandidate(candidate);
+                            } catch (err) {
+                                console.error("Error adding ice candidate:", err);
+                            }
                         }
                         break;
                     case "hangup":
-                        hangup();
+                        endVideoCall();
                         break;
                 }
             } catch (err) {
@@ -908,7 +902,7 @@
             }
         };
 
-        function hangup() {
+        function endVideoCall() {
             if (peerConnection) {
                 peerConnection.close();
                 peerConnection = null;
@@ -926,9 +920,9 @@
             
             document.querySelector("#localVideo").srcObject = null;
             document.querySelector("#remoteVideo").srcObject = null;
-            document.querySelector("#localVideo").classList.remove("smallFrame");
             
-            hideVideoModal();
+            // Show video placeholder when call ends
+            showVideoPlaceholder();
             
             if (inCall) {
                 socket.emit("signalingMessage", { 
@@ -938,14 +932,6 @@
                 addSystemMessage("📞 Video call ended");
                 inCall = false;
             }
-            
-            // Reset button states
-            videoEnabled = true;
-            micEnabled = true;
-            cameraButton.innerHTML = "📷";
-            micButton.innerHTML = "🎤";
-            cameraButton.style.opacity = "1";
-            micButton.style.opacity = "1";
         }
 
         socket.on("signalingMessage", handleSignalingMessage);
@@ -956,16 +942,12 @@
                 e.preventDefault();
                 chatform.dispatchEvent(new Event('submit'));
             }
-            
-            if (e.key === 'Escape' && inCall) {
-                hangup();
-            }
         });
 
         // Handle page unload
         window.addEventListener('beforeunload', () => {
             if (inCall) {
-                hangup();
+                endVideoCall();
             }
             socket.disconnect();
         });
