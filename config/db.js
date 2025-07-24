@@ -2,14 +2,18 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-        console.log('MongoDB connected successfully');
+        if (process.env.MONGODB_URI) {
+            await mongoose.connect(process.env.MONGODB_URI, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            });
+            console.log('MongoDB connected successfully');
+        } else {
+            console.log('No MongoDB URI provided. Running without database.');
+        }
     } catch (err) {
         console.error('DB connection failed:', err);
-        process.exit(1); // stop the app if DB connection fails
+        console.log('Continuing without database...');
     }
 };
 
