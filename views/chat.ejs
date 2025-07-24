@@ -66,12 +66,12 @@
 
         .video-controls {
             position: absolute;
-            top: 20px;
+            top: 30px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 15px;
-            z-index: 20;
+            z-index: 30;
         }
 
         .video-control-btn {
@@ -88,6 +88,8 @@
             box-shadow: 0 4px 16px rgba(0,0,0,0.2);
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            white-space: nowrap;
+            min-width: max-content;
         }
 
         .video-control-btn:hover {
@@ -97,6 +99,20 @@
 
         .video-control-btn.start-chat {
             background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            font-weight: 700;
+            padding: 16px 32px;
+            font-size: 18px;
+            border-radius: 30px;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .video-control-btn.start-chat:hover {
+            background: linear-gradient(135deg, #45a049, #388e3c);
+            transform: scale(1.08);
+            box-shadow: 0 12px 30px rgba(76, 175, 80, 0.5);
         }
 
         /* Chat Section */
